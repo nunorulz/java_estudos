@@ -1,3 +1,5 @@
+package estruturarepeticao;
+
 import java.util.TreeMap;
 
 public class EstudoTreeMap {

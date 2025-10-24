@@ -1,3 +1,5 @@
+package logicasequencial;
+
 import java.util.Scanner;
 
 public class EntradaSaidaDeDados {

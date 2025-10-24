@@ -1,3 +1,5 @@
+package estruturarepeticao;
+
 import java.util.HashMap;
 
 public class EstudoHashMap {
