@@ -54,8 +54,6 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-<<<<<<< HEAD
-=======
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -79,7 +77,6 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
->>>>>>> origin/master
 	</dependencies>
 
 	<build>
