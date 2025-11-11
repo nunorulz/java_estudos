@@ -1,58 +1,59 @@
 package com.javanauta.aprendendospring.infrastructure.security;
 
-
-import org.springframework.stereotype.Service;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets; // NOVO IMPORT
 import java.util.Date;
 
-@Service
+@Component
 public class JwtUtil {
 
-    // Chave secreta usada para assinar e verificar tokens JWT
-    private final SecretKey secretKey;
+    @Value("${jwt.secret}")
+    private String secretKeyString;
 
-    // Construtor que gera uma chave secreta segura para assinatura usando o algoritmo HS256
-    public JwtUtil(){
-        // Gera uma chave secreta para o algoritmo de assinatura HS256
-        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private SecretKey secretKey;
+
+    @PostConstruct
+    public void init() {
+        byte[] keyBytes = secretKeyString.getBytes(StandardCharsets.UTF_8);
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Gera um token JWT com o nome de usuario e validade de 1 hora
-    public String generateToken(Sting username){
+    // Gera token JWT com validade de 1 hora
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(username) // Define o nome de usuario com o assunto do token
-                .setIssuedAt(new Date()) // Define a data e hora de emissao do token
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Define a data e hora de expiração (1 hora a partir da emissao)
-                .signWith(secretKey) // Assina o token com a chave secreta
-                .compact(); // Constrói o token JWT
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60))
+                .signWith(secretKey)
+                .compact();
     }
 
-    //Extrai as claims do token JWT (informações adicionais do token)
-    public Claims extactClaims(String token){
+    // Extrai as claims do token
+    public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey)//Define a chave secreta para validar a assinatura do token
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token) //Analisa o token JWT e obtem as claims
-                .getBody(); //Retorna o corpo das claims
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
         return extractClaims(token).getSubject();
     }
 
-    public boolean isTokenExpired(String token){
+    public boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
-    public boolean validateToken(String token, String username){
+    public boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
-
-
-
-
-
-
 }
