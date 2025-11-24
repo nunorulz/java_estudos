@@ -54,14 +54,13 @@ public class UsuarioConverter {
                 .build();
     }
 
-    // ✅ CORRIGIDO: parâmetro 'Usuario usuario' e getEnderecos()/getTelefones()
     public UsuarioDTO paraUsuarioDTO(Usuario usuario){
         return UsuarioDTO.builder()
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
                 .senha(usuario.getSenha())
-                .endereco(paraListaEnderecoDTO(usuario.getEnderecos()))  // ✅ getEnderecos()
-                .telefone(paraListaTelefonesDTO(usuario.getTelefones()))  // ✅ getTelefones()
+                .endereco(paraListaEnderecoDTO(usuario.getEnderecos()))
+                .telefone(paraListaTelefonesDTO(usuario.getTelefones()))
                 .build();
     }
 
